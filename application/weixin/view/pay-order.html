@@ -1,0 +1,218 @@
+<html>
+<head>
+    <title>微信支付</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="/weixin/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="/weixin/css/style.css?v=1.0"/>
+    <script src="/weixin/js/common.js" type="text/javascript" charset="utf-8"></script>
+    <script src="__STATIC__/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+    <style type="text/css">
+        .main{
+            padding: .2rem;
+            min-height: 90vh;
+        }
+        .order-content{
+            margin: .2rem;
+        }
+        .order-item li{
+            position: relative;
+            padding: .1rem .4rem;
+            border-radius: .2rem;
+            background: #fff;
+            box-shadow: 0px 0.1rem 0.2rem #c8c8c86e;
+            margin-bottom: .5rem;
+        }
+        .order-item p{
+            margin: .2rem 0;
+        }
+        .order-item p .msg{
+            font-weight: 700;
+        }
+
+        .gopayment{
+            float: right;
+            font-size: .3rem;
+            line-height: .3rem;
+            border: 1px solid #F61F13;
+            padding: .1rem .15rem;
+            border-radius: .3rem;
+            color: #F61F13;
+            margin-top: -.2rem;
+        }
+        .paymentbtn,.cheap,.comment{
+            width: 70%;
+            margin: 0 auto;
+            font-size: .3rem;
+            padding: .15rem 0;
+            border-radius: .1rem;
+            color: #fff;
+            background: #F61F13;
+            text-align: center;
+        }
+        .pay-info .comment{
+            background: #F5F5F5;
+            border: 1px solid #F61F13;
+            margin-top: .3rem;
+        }
+        .comment a{
+            color: #F61F13;
+        }
+        .cheap a{
+            color: #fff;
+        }
+        
+        .pay-info{
+            text-align: center;
+            margin-top:.5rem;
+            display: none;
+        }
+        .pay-info p{
+            width: 70%;
+            margin: .2rem auto;
+        }
+        .pay-info .success img{
+            width: .7rem;
+        }
+        .pay-info .success{
+            font-size: .7rem;
+            color: #09BB07;
+            width: 90%;
+        }
+        .pay-info .msg{
+            font-weight: bold;
+            margin-bottom: .5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="top">
+			<a href="javascript:history.back(-1)">
+				<p class="fl">
+					<img src="/weixin/images/back.png" class="goback" alt="" />
+					返回
+				</p>
+			</a>			
+		</div>
+		<div class="main">
+			<div class="order-content">
+				<ul class="order-item">
+					<li>
+						<p class="goods">{:lang('商品名称')}：<span class="msg">{$order['goods_name']}</span></p>
+						<p>{:lang('支付金额')}：<span class="msg">{$order['money']}元</span></p>
+						<p>{:lang('订单号')}：<span class="msg">{$order['order_sn']}</span></p>
+					</li>				
+				</ul>
+				<p class="paymentbtn" onClick="callpay()">立即支付</p>
+			</div>
+			
+			<!--支付成功后显示下方-->
+			<div class="pay-info" id="pay-success">
+				<p class="success">
+					<img src="/weixin/images/success.png" alt="" />
+					支付成功gion/index.html
+				</p>
+				
+				<!-- 引导分享 -->
+				<div id="wxshare" class="mask">
+					<div class="share-img">
+						<img src="/weixin/images/share-lead.png" alt="" />
+					</div>
+				</div>
+			</div>
+			<!-- 支付失败，或者用户点取消支付 -->
+			<div class="pay-info" id="pay-error">
+				<p class="success">
+					<img src="/weixin/images/error.png" alt="" />
+					支付遇到问题
+				</p>
+				<p class="msg">
+					如需重新支付，请在“我的订单”中重新发起支付！
+				</p>
+				<p class="cheap">
+					<a href="{:url('Order/lists')}">查看我的订单</a>
+				</p>
+
+			</div>
+			
+		</div>
+<script type="text/javascript">
+//调用微信JS api 支付
+function jsApiCall()
+{
+	WeixinJSBridge.invoke(
+		'getBrandWCPayRequest',
+		<?php echo $jsApiParameters; ?>,
+		function(res){
+			if(res.err_msg == "get_brand_wcpay_request:ok" ) { //支付成功时调起
+				$('#pay-success').show();
+				$('.order-content').hide();
+				setTimeout(function(){
+					$('#wxshare').fadeIn();
+					
+				},2000);
+				//异步接口
+				$('.share-img').click(function(){
+					$('#wxshare').hide();
+				})
+			}else{ //支付失败时调起
+				$('#pay-error').show();
+				$('.order-content').hide();
+			}
+		}
+	);
+}
+
+function callpay()
+{
+	if (typeof WeixinJSBridge == "undefined"){
+		if( document.addEventListener ){
+			document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+		}else if (document.attachEvent){
+			document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+			document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+		}
+	}else{
+		jsApiCall();		    
+	}
+}
+</script>
+</body>
+	<!--<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			wx.config({
+			    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+			    appId: "{ $wx['appId']}", // 必填，公众号的唯一标识
+			    timestamp: "{ $wx['timestamp']}", // 必填，生成签名的时间戳
+			    nonceStr: "{ $wx['nonceStr']}", // 必填，生成签名的随机串
+			    signature: "{ $wx['signature']}",// 必填，签名
+			    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
+			});
+
+		})
+		var orderid=$(this).attr('data-orderid');
+		getShareMsg(orderid);
+					
+		function getShareMsg(id){
+			$.ajax({
+				type:"get",
+				url:"{:url('Index/findOrder')}",
+				data:{id:id},
+				dataType:'json',
+				success:function(result){
+					var data=result.data;
+					wx.onMenuShareAppMessage({
+						title: data.share_title, // 分享标题
+						desc: data.share_desc, // 分享描述
+						link: "http://{$_SERVER['HTTP_HOST']}{:url('Share/order')}?id="+data.goods_id+"wx_openid="+data.wx_openid+"&seller_id="+data.seller_id, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+						imgUrl: "http://{$_SERVER['HTTP_HOST']}"+data.share_img, // 分享图标
+						success: function () {
+						}
+					});
+					$('#wxshare').fadeIn();
+				}
+			});
+		}
+	</script>-->
+</html>

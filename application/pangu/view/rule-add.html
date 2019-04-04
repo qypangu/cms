@@ -1,0 +1,112 @@
+<form class="form-horizontal" role="form" action="{:url('add')}" method="post">
+	<div class="form-group">
+        <label for="pid" class="col-sm-2 control-label no-padding-right">上级菜单：</label>
+        <div class="col-sm-8">
+          <select name="pid" id="pid" onchange="change_menu();">
+          	<option value="0" level="0" pid="1" list_sort="">请选择上级菜单</option>
+              <foreach name="list_rule" item="r">
+              <option value="{$r['list_sort']}" level="{$r['level']}" pid="{$r['pid']}" list_sort="{$r['list_sort']}" rule_name="{$r['name']}">{:str_repeat('&nbsp;',($r['level']-1)*8)}|----{$r['title']}({$r['name']})</option>
+              </foreach>
+          </select>
+          <input name="level" id="level" type="hidden" value="1" />
+        </div>
+      </div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="title">规则名称：</label>
+		<div class="col-sm-8">
+			<input type="text" id="title" name="title" class="form-control" value="">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="name">规则标记：</label>
+		<div class="col-sm-8">
+			<input type="text" id="rule_name" name="name" class="form-control" placeholder="格式示例：user/Admin/index，必需3段式" value="">
+		</div>
+	</div>
+	<div class="form-group">
+      <label for="condition" class="col-sm-2 control-label no-padding-right">附加条件：</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" placeholder="必需是user表有的字段才附加，如:{sorce}>10,表示积分大于10的用户才满足条件" name="condition" id="condition" value="">
+      </div>
+    </div>        
+    <div class="form-group">
+      <label for="title" class="col-sm-2 control-label no-padding-right">排序：</label>
+      <div class="col-sm-8">            
+        <input name="list_sort" id="list_sort" type="text" value="999" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="title" class="col-sm-2 control-label no-padding-right">菜单类型：</label>
+      <div class="col-sm-8">
+      <select name="menu_type">
+        	<option value="">隐藏规则</option>
+            <option value="menu_left" selected="selected">左边菜单</option>
+            <option value="button">按钮</option>
+      </select>
+      </div>
+    </div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="status">创建文件：</label>
+		<div class="col-sm-8">
+			<label class="checkbox-inline">
+				<input name="create_file" type="radio" class="ace" value="1" checked="checked">
+				<span class="lbl">是</span>
+			</label>
+			<label class="checkbox-inline">
+				<input name="create_file" type="radio" class="ace" value="0">
+				<span class="lbl">否</span>
+			</label>
+		</div>
+	</div>
+	<div class="form-group">
+      <label for="title" class="col-sm-2 control-label no-padding-right">对应模型：</label>
+      <div class="col-sm-8">
+      <select name="model_name">
+        	<option value="" selected="selected">请选择对应模型</option>
+            <foreach name="list_model" item="model">
+            <option value="{$model['module']}/{$model['model_name']}" <if condition="input('model_name') eq $model['model_name']">selected="selected"</if>>{$model['module']}/{$model['model_name']}({$model['remark']})</option>
+            </foreach>
+      </select>
+      <span class="help-button" data-rel="popover" data-trigger="hover" data-placement="left" data-content="不选择时默认对应与规则名一至的模型" title="" data-original-title="说明">?</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="title" class="col-sm-2 control-label no-padding-right">HTML模板：</label>
+      <div class="col-sm-8">
+      <select name="demo_html">
+        	<option value="" selected="selected">请选择对应HTML</option>        	
+            <option value="demo/index.html">demo/index.html</option>
+            <option value="demo/lists.html">demo/lists.html</option>
+            <option value="demo/add.html">demo/add.html异步</option>
+            <option value="demo/edit.html">demo/edit.html异步</option>            
+      </select>
+      <span class="help-button" data-rel="popover" data-trigger="hover" data-placement="left" data-content="不选择时默认对应与规则名一至的模型" title="" data-original-title="说明">?</span>
+      </div>
+    </div>
+	<div class="form-group" style="text-align:center">
+		<div class="col-md-12">
+			<button class="btn btn-info" type="submit">
+				<i class="ace-icon fa fa-check bigger-110"></i>
+				确认添加
+			</button>
+		</div>
+	</div>
+</form>
+<script language="javascript">
+function change_menu(){
+	var menu_type=$('#pid').find('option:selected');
+	$('#level').val(parseInt(menu_type.attr('level'))+1);
+	var count=$("#pid option[pid="+menu_type.val()+"]").length+1;
+	if(count<10){
+		var list_sort=("10"+count).substr(-3);		
+	}else if(count<99){
+		var list_sort=("1"+count).substr(-3);
+	}else{
+		var list_sort=count;
+	}	
+	$('#list_sort').val(menu_type.attr('list_sort')+list_sort);
+	$("#rule_name").val(menu_type.attr('rule_name'));
+}
+$('[data-rel=popover]').popover({container:'body'});
+change_menu();
+</script>

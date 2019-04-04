@@ -1,0 +1,83 @@
+<extend name="common@layout-ace"  />
+<block name="css"></block>
+<block name="nav">
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+  <ul class="breadcrumb">
+    <li> <i class="ace-icon fa fa-home home-icon"></i> <a href="{:url('index')}">主页</a> </li>
+    <li class="active">{:lang('menu_'.input('menu_selected'))}</li>
+  </ul>
+  <!-- /.breadcrumb -->
+     <div class="nav-search" id="nav-search">
+		<a class="btn btn-xs btn-info" href="{:url('batchget')}"><i class="ace-icon fa fa-pencil bigger-110"></i>更新用户信息</a>
+     </div>
+     <!-- /.nav-search --> 
+</div>
+</block>
+<block name="main">
+<div style="background-color:#d9edf7; border:1px solid #bce8f1; padding:2px 10px;">
+	<form class="form-inline" method="post" action="">
+	<label for="nickname">{:lang('weixin/weixinUser:nickname')}：</label>
+<input type="text" name="nickname" value="{:input('nickname')}">
+<label for="sex">{:lang('weixin/weixinUser:sex')}：</label>
+<select name="sex" id="sex">
+	<option value="">所有</option>
+    <option value="1" <if condition="input('sex') eq 1">selected</if>>男</option>
+    <option value="2" <if condition="input('sex') eq 2">selected</if>>女</option>
+</select>
+<label for="sex">{:lang('关注状态')}：</label>
+<select name="subscribe" id="subscribe">
+	<option value="">所有</option>
+    <option value="1" <if condition="input('subscribe') eq 1">selected</if>>已关注</option>
+    <option value="2" <if condition="input('subscribe') eq 2">selected</if>>未关注</option>
+</select>
+<label for="openid">{:lang('weixin/weixinUser:openid')}：</label>
+<input type="text" name="openid" value="{:input('openid')}">
+        <button class="btn btn-info btn-sm" type="submit"> <i class="icon-search bigger-110"></i>{:lang('查询')} </button>
+    </form>
+</div>
+  <table id="simple-table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="center"> <label class="pos-rel">
+            <!--<input type="checkbox" class="ace" id="all_id" onclick="$('.ids').attr('checked',$('#all_id').prop('checked'));" />-->
+            <input type="checkbox" class="ace" id="all_id" onclick="$('.ids').prop('checked',$('#all_id').prop('checked'))" />
+            <span class="lbl">{:lang('全选')}</span> </label>
+        </th>
+<th width="100px">{:lang('weixin/weixinUser:nickname')}</th>
+<th>{:lang('weixin/weixinUser:headimgurl')}</th>
+<th>{:lang('weixin/weixinUser:sex')}</th>
+<th>{:lang('关注时间')}</th>
+<th>{:lang('weixin/weixinUser:province')}</th>
+<th>{:lang('weixin/weixinUser:city')}</th>
+<th>{:lang('weixin/weixinUser:openid')}</th>
+<th>{:lang('weixin/weixinUser:unionid')}</th>
+
+        <th>{:lang('操作')}</th>
+      </tr>
+    </thead>
+    <tbody>
+    <foreach name="list" item="info">
+      <tr>
+        <td class="center"><label class="pos-rel">
+            <input type="checkbox" class="ace ids" name="id[]" class="" />
+            <span class="lbl">{$key+1+((input('page')?:1)-1)*config('page_size')}</span> </label></td>
+<td>{$info['nickname']}</td>
+<td><img src="{$info['headimgurl']}" height="50px" /></td>
+<td>{:lang('sex_'.$info['sex'])}</td>
+<td><if condition="$info['subscribe_time'] gt 0">{:date('Y-m-d H:i',$info['subscribe_time'])}<else>未关注</if></td>
+<td>{$info['province']}</td>
+<td>{$info['city']}</td>
+<td>{$info['openid']}</td>
+<td>{$info['unionid']}</td>
+
+        <td><div class=" btn-group">
+            <a class="btn btn-xs btn-info" href="javascript:open_dialog('{:url('edit',['id'=>$info['id']])}');"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('备注')}</a>
+          </div>
+        </td>
+      </tr> 
+      </foreach>     
+    </tbody>
+  </table>
+  <div style="text-align:center">{$list|raw}</div>
+</block>
+<block name="js"></block>

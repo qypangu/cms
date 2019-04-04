@@ -1,0 +1,37 @@
+<extend name="layout"  />
+<block name="css"></block>
+<block name="main">
+  <table id="simple-table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="center" width="65px"> <label class="pos-rel">
+            <span class="lbl">{:lang('更新排序')}</span> </label>
+        </th>
+        <th>{:lang('规则名称')}</th>
+        <th>{:lang('标记')}</th>
+        <th>{:lang('附加条件')}</th>
+        <th>{:lang('类型')}</th>
+        <th>{:lang('状态')}</th>
+        <th>{:lang('操作')}</th>
+      </tr>
+    </thead>
+    <tbody>
+    <foreach name="list" item="info">
+      <tr>
+        <td class="center"><input name="list_sort[{$info['id']}]" type="text" value="{$info['list_sort']}" size="9" maxlength="12" /></td>
+        <td>{:str_repeat('&nbsp;',($info['level']-1)*8)}|----{$info['title']}</td>
+        <td>{$info['name']}</td>
+        <td>{$info['condition']}</td>
+        <td>{$info['menu_type']}</td>
+        <td>{:lang('status_'.$info['status'])}</td>
+        <td><div class=" btn-group">
+            <a class="btn btn-xs btn-info" href="javascript:open_dialog('{:url('edit',['id'=>$info['id']])}');"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('修改')}</a>
+            <a class="btn btn-xs btn-danger" href="javascript:delete_dialog({$info['id']});"> <i class="ace-icon fa fa-trash-o bigger-120">{:lang('删除')}</i> </a>
+          </div>
+        </td>
+      </tr> 
+      </foreach>     
+    </tbody>
+  </table>
+</block>
+<block name="js"></block>

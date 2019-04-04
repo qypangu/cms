@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{$list_other['title']}</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/index.css?v=1.2"/>
+    	<script src="__STATIC__/common.js" type="text/javascript" ></script>
+	</head>
+	<body>
+		<div class="header">
+			<div class="head-img">
+				<img src="{$data['headimgurl']}"/>
+			</div>
+			<p>{$data['nickname']}</p>
+		</div>
+		<div class="main">
+			<if condition="$ident_wx eq 2">
+			<div class="qiandao_success" >
+				<div class="tips">
+					<img src="__STATIC__/screen/qiandao/img/qiandao.png"/>
+				</div>
+				<p class="rank">您是第{$data['ranking']}位</p>
+				<div class="time">
+	                {:date('Y年m月d日 H:i',$data['create_time'])}
+				</div>
+				
+				<div class="msg-box">
+					<div class="title">
+						您的资料
+					</div>
+					<p>姓名：{$data['nickname']} </p>
+					<p>手机：{$data['mobile']} </p>
+					<foreach name="$data['other_param']" item="vo">
+						<p>{$vo['label']}:{$vo['value']}</p>
+					</foreach>
+				</div>
+			</div>
+			<else>
+			<div class="qiandao_init">
+				<div class="tan-box">
+					<div class="title">
+						完善你的资料，还可以参加抽奖！
+					</div>
+					<div class="form-content">
+						<form id="qiandao_form" method="post">
+							<input type="hidden" value="{$ident_wx}" id="wx_id" />
+							<input type="hidden" name="id" id="screen_id" value="{:input('id')}" />
+							<input type="hidden" name="sex"  value="{$data['sex']}" />
+							<input type="hidden" name="headimgurl" id="headimgurl" value="{$data['headimgurl']}" />
+							<input type="text" name="nickname" id="nickname" value="{$data['nickname']}" placeholder="请你输入姓名" />
+							<input type="text" maxlength="11" name="mobile" id="mobile" <if condition="$ident_wx eq 3">value="{$data['mobile']}"</if> placeholder="请你输入手机号码" />
+							<if condition="$ident_wx eq 3">
+								<input type="hidden" id="qid" value="{$data['id']}" />
+								<foreach name="$list_other['other_param_config']" item="info" key="k" >
+								<if condition="$info['type'] eq 2">
+									<input type="hidden" name="other_param[{$k}][label]" value="{$info['label']}" />
+									<select name="other_param[{$k}][value]" class="other_param">
+										<option value="">请选择{$info['label']}</option>
+										<foreach name="$info['value']" item="vo">
+											<option value="{$vo}" data-id="{$other_default[$info['label']]}" <if condition="$other_default[$info['label']] eq $vo">selected</if>>{$vo}</option>
+										</foreach>
+									</select>
+								</if>
+								</foreach>
+								<else>
+								<foreach name="$list_other['other_param_config']" item="info" key="k" >
+									<if condition="$info['type'] eq 1">
+										<input type="" name="" id="" value="" />
+									</if>
+									<if condition="$info['type'] eq 2">
+										<input type="hidden" name="other_param[{$k+1}][label]" value="{$info['label']}" />
+										<select name="other_param[{$k+1}][value]" class="other_param">
+											<option value="">请选择{$info['label']}</option>
+											<foreach name="$info['value']" item="vo">
+												<option value="{$vo}">{$vo}</option>
+											</foreach>
+										</select>
+									</if>
+									
+								</foreach>	
+							</if>
+							
+							<p class="btn" data-type="" id="submit">提交</p>
+						</form>
+					</div>
+				</div>
+			</div>
+				
+			</if>
+			<div class="remark-box">
+				<div class="title"><img src="__STATIC__/screen/qiandao/img/remark.png"/></div>
+				<p>{$list_other['remark']|raw}</p>
+			</div>
+		</div>
+	</body>
+	<script src="__STATIC__/jquery-3.3.1.min.js"></script>
+	<script src="__STATIC__/layer-v3.1.1/layer/layer.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$('#submit').click(function(){
+			var isright=1;
+			var dis=$(this).attr('data-type');
+			if($('#mobile').val()==''){
+				layer.msg('请输入正确的手机号码！')
+				return;
+			}
+			$('.other_param').each(function(){
+				if($(this).val==''){
+					isright=0
+				}
+			})
+			if(isright==0){
+				layer.msg('请填写完成信息！')
+				return;
+			}
+
+			if($('#wx_id').val()==3){
+				$.ajax({
+					type:"post",
+					url:"{:url('qian_dao/saveLog')}",
+					data:{id:$('#qid').val(),screen_id:$('#screen_id').val()},
+					dataType:'json',
+					success:function(rs){
+						if(rs.status==100){
+							layer.msg(rs.info,{icon:1,time:1000,shade:0.3},function(){
+								realod()
+							});
+						}else{
+							layer.msg(rs.info);
+						}
+					}
+				});
+			}else{
+				var post_data=$('#qiandao_form').serialize();
+				$.ajax({
+					type:"post",
+					url:"{:url('qian_dao/sign')}",
+					data:post_data,
+					dataType:'json',
+					success:function(rs){
+						if(rs.status==100){
+							layer.msg(rs.info,{icon:1,time:1000,shade:0.3},function(){
+								realod()
+							});
+						}else{
+							layer.msg(rs.info);
+						}
+					}
+				});
+			}
+			
+		})
+	  	$('#qiandao_form input').bind('blur',function(){
+		  	document.body.scrollTop = 0;
+		})
+		$('#qiandao_form select').change(function(){
+	    	document.body.scrollTop = 0;
+		})
+		
+		setTimeout(function(){
+			document.body.scrollTop = document.body.scrollHeight;
+		},300);
+		function realod(){
+		  var {search,href} = window.location;
+		  href = href.replace(/&?t_reload=(\d+)/g,'')
+		  window.location.href = href+(search?'&':'?')+"t_reload="+new Date().getTime()
+		}
+	</script>
+</html>

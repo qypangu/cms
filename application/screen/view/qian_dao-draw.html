@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>3D-签到动画</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/draw.css"/>
+		<link rel="stylesheet" href="__STATIC__/screen/qiandao/css/animate.min.css">
+	</head>
+	<body style="background-image: url({$qiandao['bg_img']});">
+		<input type="hidden" id="qid" value="{:input('id')}" />
+		<input type="hidden" id="islogin" value="{$login_ident}" />
+		<input type="hidden" id="url" value="{$qiandao['mobile_url']}" />
+		<audio  id="bgMusic" src="{$qiandao['bg_music']}" loop autoplay></audio>
+		<div class="login-box" id="login-box">
+			<p class="title">{$qiandao['title']}</p>
+			<div>
+				<input type="text" name="password" id="password" value="请输入管理密码" />
+				<input type="button" id="submit" value="开启"/>
+			</div>
+		</div>
+		<div class="top-title">
+			<img src="{$qiandao['logo']}"/>{$qiandao['title']}
+		</div>
+		<div class="code-box">
+			<div class="left-box">
+				<div class="code-bg">
+					<div id="qrcode"></div>
+				</div>
+				<p>扫一扫进入活动中</p>
+			</div>
+			<span class="line"></span>
+			<div class="right-box">
+				<!--<p>搜索关注<span>威帅</span> <br /> 发送<span>江淮R3</span>即可参与</p>-->
+			</div>
+		</div>
+		<div class="draw-list">
+			<ul>
+				<li>
+					<div class="box">
+						<p class="title">四等奖</p>
+						<div class="gift">
+							<img src=""/>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="menu-box">
+			<ul class="menu-list">
+				<!--<li>弹幕</li>
+				<li>音乐</li>
+				<li>视频</li>
+				<li>皮肤</li>
+				<li>应用</li>-->
+				<li class="screen-icon" onclick="fullScreen();">全屏</li>
+			</ul>
+		</div>
+		<script src="__STATIC__/screen/qiandao/js/jquery-3.3.1.min.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/qrcode.min.js"></script>
+		<script type="text/javascript">
+			//生产二维码
+			new QRCode(document.getElementById('qrcode'), $('#url').val());
+		</script>
+
+		<script>
+    		// 登录验证
+    		$('#submit').click(function(){
+    			var pws=$('#password').val();
+    			var id=$('#qid').val();
+    			if($('#password').attr('type')=='text'){
+    				return;
+    			}
+    			
+    			$.ajax({
+    				type:"post",
+    				url:"{:url('login_check')}",
+    				data:{id:id,password:pws},
+    				dataType:'json',
+    				success:function(rs){
+    					if(rs.status==100){
+    						$('#login-box').hide();
+    						$('#islogin').val(1);
+    						isLogin()
+    					}else{
+    						alert(rs.info);
+    					}
+    				}
+    			});
+    		})
+    		//密码输入变化
+    		$('#password').focus(function(){
+    			if($(this).attr('type')=='text'){
+	    			$(this).attr('type','password');
+	    			$(this).val('');	
+    			}
+    			
+    		})
+    		$('#password').blur(function(){
+    			if($(this).val()==''){
+    				$(this).attr('type','text');
+    				$(this).val('');
+    			}
+    			
+    		})
+
+			isLogin()
+			function isLogin(){
+				if($('#islogin').val()!=0){
+					$('#login-box').hide();
+				}	
+			}
+		
+	        //全屏
+	        function fullScreen(){
+	            var el = document.documentElement;
+	            var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;      
+	                if(typeof rfs != "undefined" && rfs) {
+	                    rfs.call(el);
+	                };
+	              return;
+	        }
+		</script>
+		
+	</body>
+</html>

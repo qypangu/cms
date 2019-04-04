@@ -1,0 +1,105 @@
+<extend name="common@layout-ace"  />
+<block name="css">
+</block>
+<block name="nav">
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+  <ul class="breadcrumb">
+    <li> <i class="ace-icon fa fa-home home-icon"></i> <a href="#">主页</a> </li>
+    <li class="active">大屏规则列表</li>
+  </ul>
+  <!-- /.breadcrumb -->
+  	<div class="nav-search" id="nav-search">
+	 	<a class="btn btn-xs btn-success" href="{:url('add')}"><i class="ace-icon fa fa-plus bigger-110"></i>添加</a>
+ 	</div>
+     <!-- /.nav-search --> 
+</div>
+</block>
+<block name="main">
+<div style="background-color:#d9edf7; border:1px solid #bce8f1; padding:2px 10px;">
+	<form class="form-inline" method="post" action="">
+		<label for="template_id">{:lang('screenDraw:title')}：</label>
+        <input type="text" name="title" value="{:input('title')}">
+        <button class="btn btn-info btn-sm" type="submit"> <i class="icon-search bigger-110"></i>{:lang('查询')} </button>
+    </form>
+</div>
+  <table id="simple-table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="center"> <label class="pos-rel">
+            <!--<input type="checkbox" class="ace" id="all_id" onclick="$('.ids').attr('checked',$('#all_id').prop('checked'));" />-->
+            <input type="checkbox" class="ace" id="all_id" onclick="$('.ids').prop('checked',$('#all_id').prop('checked'))" />
+            <span class="lbl">{:lang('全选')}</span> </label>
+        </th>
+        <th class="hidden-480">{:lang('screenDraw:title')}(点击复制丽链接)</th>
+        <th class="hidden-480">{:lang('screenDraw:logo')}</th>
+        <th>{:lang('screenDraw:bg_img')}</th>
+        <!--<th class="hidden-480">{:lang('screenQiandao:remark')}</th>-->
+        <th>{:lang('screenDraw:status')}</th>
+        <th>{:lang('操作')}</th>
+      </tr>
+    </thead>
+    <tbody>
+    <foreach name="list" item="info">
+      <tr>
+        <td class="center"><label class="pos-rel">
+            <input type="checkbox" class="ace ids" name="id[]" class="" />
+            <span class="lbl">{$key+1+((input('page')?:1)-1)*config('page_size')}</span> </label></td>
+        <td class="hidden-480" >
+        	<button type="button" style="border: 0;background: transparent;outline: 0;color: #2B7DBC;" class="copy" data-clipboard-text = "http://{$_SERVER['HTTP_HOST']}{:url('screen/draw/detail',['screen_draw_id'=>$info['id']])}">{$info['title']}</button>
+        </td>
+        <td class="hidden-480"><img src="{$info['logo']}" height="50px" /></td>
+        <td style="width: 100px;"><button class="btn btn-default btn-info" id="img-big" data-img="{$info['bg_img']}">点击查看图片</button></td>
+        <!--<td class="hidden-480">{$info['remark']|raw}</td>-->
+        <td>{$info['status']}</td>
+        <td><div class=" btn-group">
+        		<a class="btn btn-xs btn-info sjbtn"  data-id="{$info['id']}"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('数据穿透')}</a>
+            <a class="btn btn-xs btn-info" href="{:url('edit',['id'=>$info['id']])}"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('修改')}</a>
+            <a class="btn btn-xs btn-danger" href="javascript:delete_dialog('id={$info['id']}');"> <i class="ace-icon fa fa-trash-o bigger-120">{:lang('删除')}</i> </a>
+          </div>
+        </td>
+      </tr> 
+      </foreach>     
+    </tbody>
+  </table>
+  <div style="text-align:center">{$list|raw}</div>
+</block>
+<block name="js">
+	<script src="__STATIC__/screen/qiandao/js/clipboard.min.js"></script>
+	<script src="__STATIC__/layer-v3.1.1/layer/layer.js"></script>
+	<script type="text/javascript">
+		        //复制链接
+    		var clipboard=new Clipboard('.copy');		
+					clipboard.on('success',function(e){
+						layer.msg('复制成功',{icon:1});
+					})
+				
+				$('#img-big').click(function(){
+					var imgurl=$(this).attr('data-img');
+					var html=`<img src="${imgurl}" width=100% />`
+					layer.open({
+						title:'图片预览',
+						content:html,
+						area:'500px',
+						btn:0
+					})
+				})
+				
+				$('.sjbtn').click(function(){
+					var id=$(this).attr('data-id');
+					$.ajax({
+						type:"post",
+						url:"{:url('data_deal/admin.screen_log/add_screenlog')}",
+						data:{id:id},
+						dataType:'json',
+						success:function(rs){
+							if(rs.status==100){
+								layer.msg(rs.info,{icon:1});
+							}else{
+								layer.msg(rs.info,{icon:0});
+							}
+						}
+						
+					});
+				})
+	</script>
+</block>

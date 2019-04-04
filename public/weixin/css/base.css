@@ -1,0 +1,97 @@
+@font-face {
+    font-family: 'myFont'; 
+    src: url('../font/pingfang-medium.ttf'); //你的资源目录
+    font-weight: normal;
+    font-style: normal;
+ }
+html{
+	font-family: myFont, sans-serif;;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: left;
+	color: #333;
+}
+*::-webkit-scrollbar{
+	display: none;
+}
+html::-webkit-scrollbar{
+	display: none;
+}
+.border-right{
+	border-right: 1px solid #eee;
+}
+.border-bottom{
+	border-bottom: 1px solid #eee;
+}
+
+body{
+	padding: 0;
+	margin: 0;
+}
+img{
+	width: 100%;
+	vertical-align: middle;
+}
+input,select,button{
+    font: inherit;
+    resize: none;
+    outline: 0;
+    color:#333;   
+	box-sizing: border-box
+}
+.clearfix:after{
+    content:'';
+    display: table;
+    clear: both;
+}
+
+a{
+    color: #333;
+    text-decoration: none;
+}
+a:active,a:hover{
+	text-decoration: none;
+}
+ul{
+    list-style: none;
+    padding:0;
+    margin:0;
+}
+p{
+    margin:0;
+}
+dd{
+    margin:0;
+}
+h1,h2,h3,h4{
+    margin:0;
+    font-weight: normal;
+}
+em{
+    font-style: normal;
+}
+.fl{
+    float:left;
+}
+.fr{
+    float: right;
+}
+
+
+/*移动端1像素 */
+@media (-webkit-min-device-pixel-ratio: 1.5),(min-devicp-pixel-ratio: 1.5) {
+    .border-1px{
+        &:after{
+            -webkit-transform: scaleY(0.7);
+            transform: scaleY(0.7)
+        }
+    }
+}
+@media (-webkit-min-device-pixel-ratio: 2),(min-devicp-pixel-ratio: 2) {
+    .border-1px{
+        &:after{
+            -webkit-transform: scaleY(0.5);
+            transform: scaleY(0.5)
+        }
+    }
+}

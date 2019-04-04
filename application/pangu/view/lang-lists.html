@@ -1,0 +1,70 @@
+<extend name="layout"  />
+<block name="css"></block>
+<block name="nav">
+      <div class="breadcrumbs ace-save-state" id="breadcrumbs">
+        <ul class="breadcrumb">
+          <li> <i class="ace-icon fa fa-home home-icon"></i> <a href="{:url('index')}">主页</a> </li>
+          <li class="active">{:lang('menu_'.input('menu_selected'))}</li>
+        </ul>
+        <!-- /.breadcrumb -->
+        <div class="nav-search" id="nav-search">
+			<button class="btn btn-xs btn-info"><i class="ace-icon fa fa-reply bigger-110"></i>返回</button>
+        </div>
+        <!-- /.nav-search --> 
+      </div>
+      </block>
+<block name="main">
+<div style="background-color:#d9edf7; border:1px solid #bce8f1; padding:2px 10px;">
+	<form class="form-inline" method="post" action="{:url('add')}">
+   		<label for="table_name">{:lang('数据表')}：</label>
+        <select name="table_name" class="form-control">
+			<option value="">请选择数据表</option>
+			<foreach name="list_table" item="table">
+			<option value="{$table}">{$table}</option>
+			</foreach>
+		</select>
+        <label for="module">{:lang('对应模块')}：</label>
+        <select name="module" class="form-control">
+			<option value="">请选择对应模块/控制器</option>
+			<foreach name="list_module" item="module">
+			<option value="{$module['title']}">{$module['title']}</option>
+			</foreach>
+		</select>
+        <label for="mobile">{:lang('语言')}：</label>
+        <select name="lang" class="form-control">
+			<option value="">请选择对应语言</option>
+			<option>zh-cn</option>
+		</select>
+        <button class="btn btn-info btn-sm" type="submit"> <i class="icon-search bigger-110"></i>{:lang('创建')} </button>
+    </form>
+</div>
+  <table id="simple-table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="center"> <label class="pos-rel">
+            <input type="checkbox" class="ace" id="all_id" onclick="$('.ids').prop('checked',$('#all_id').prop('checked'))" />
+            <span class="lbl">{:lang('全选')}</span> </label>
+        </th>
+        <th>{:lang('模块')}</th>
+        <th>{:lang('语言')}</th>
+        <th>{:lang('操作')}</th>
+      </tr>
+    </thead>
+    <tbody>
+    <foreach name="list" item="info">
+      <tr>
+        <td class="center"><label class="pos-rel">
+            <input type="checkbox" class="ace ids" name="id[]" class="" />
+            <span class="lbl">{$key+1}</span> </label></td>
+        <td class="center">{$info['module']}</td>
+        <td>{$info['lang']}</td>
+        <td><div class=" btn-group">
+            <a class="btn btn-xs btn-info" href="javascript:open_dialog('{:url('edit',['module'=>$info['module'],'lang'=>$info['lang']])}');"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('修改')}</a>
+          </div>
+        </td>
+      </tr> 
+      </foreach>     
+    </tbody>
+  </table>
+</block>
+<block name="js"></block>

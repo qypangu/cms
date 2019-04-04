@@ -1,0 +1,41 @@
+<form class="form-horizontal" role="form" action="{:url('setting')}" method="post">	
+<input name="id" type="hidden" value="{$info['id']}" />
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="account">帐号：</label>
+		<div class="col-sm-8">
+			<input type="text" id="account" name="account" class="form-control" readonly="readonly" value="{$info['account']}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="nickname">姓名：</label>
+		<div class="col-sm-8">
+			<input type="text" id="nickname" name="nickname" class="form-control" value="{$info['nickname']}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="nickname">手机号：</label>
+		<div class="col-sm-8">
+			<input type="text" id="mobile" name="mobile" class="form-control" value="{$info['mobile']}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="nickname">邮箱：</label>
+		<div class="col-sm-8">
+			<input type="email" id="email" name="email" class="form-control" value="{$info['email']}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label no-padding-right" for="remark">备注：</label>
+		<div class="col-sm-8">
+			<textarea class="form-control" id="remark" name="remark" placeholder="备注">{$info['remark']}</textarea>
+		</div>
+	</div>
+	<div class="form-group" style="text-align:center">
+		<div class="col-md-12">
+			<button class="btn btn-info" type="submit">
+				<i class="ace-icon fa fa-check bigger-110"></i>
+				确认修改
+			</button>
+		</div>
+	</div>
+</form>

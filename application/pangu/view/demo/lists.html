@@ -1,0 +1,40 @@
+<extend name="common@layout-ace"  />
+<block name="css"></block>
+<block name="main">
+<div style="background-color:#d9edf7; border:1px solid #bce8f1; padding:2px 10px;">
+	<form class="form-inline" method="post" action="">
+		{%html_form_search%}
+        <button class="btn btn-info btn-sm" type="submit"> <i class="icon-search bigger-110"></i>{:lang('查询')} </button>
+    </form>
+</div>
+  <table id="simple-table" class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th class="center"> <label class="pos-rel">
+            <!--<input type="checkbox" class="ace" id="all_id" onclick="$('.ids').attr('checked',$('#all_id').prop('checked'));" />-->
+            <input type="checkbox" class="ace" id="all_id" onclick="$('.ids').prop('checked',$('#all_id').prop('checked'))" />
+            <span class="lbl">{:lang('全选')}</span> </label>
+        </th>
+		{%html_table_thead_th%}
+        <th>{:lang('操作')}</th>
+      </tr>
+    </thead>
+    <tbody>
+    <foreach name="list" item="info">
+      <tr>
+        <td class="center"><label class="pos-rel">
+            <input type="checkbox" class="ace ids" name="id[]" class="" />
+            <span class="lbl">{$key+1+((input('page')?:1)-1)*config('page_size')}</span> </label></td>
+		{%html_table_tr_td%}
+        <td><div class=" btn-group">
+            <a class="btn btn-xs btn-info" href="javascript:open_dialog('{:url('edit',['id'=>$info['id']])}');"> <i class="ace-icon fa fa-pencil bigger-120"></i>{:lang('修改')}</a>
+            <a class="btn btn-xs btn-danger" href="javascript:delete_dialog('id={$info['id']}');"> <i class="ace-icon fa fa-trash-o bigger-120">{:lang('删除')}</i> </a>
+          </div>
+        </td>
+      </tr> 
+      </foreach>     
+    </tbody>
+  </table>
+  <div style="text-align:center">{$list|raw}</div>
+</block>
+<block name="js"></block>

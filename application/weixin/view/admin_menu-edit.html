@@ -1,0 +1,129 @@
+<extend name="common@layout-ace" />
+<block name="css"></block>
+<block name="main">
+<form class="form-horizontal" id="form-role-edit" name="role-edit" role="form" action="{:url('edit')}" method="post">
+<input name="id" type="hidden" value="{$info['id']}" />
+	<div class="form-group" style="text-align: center">
+		<div class="col-md-12">
+			<div>appid:{$info['appid']}</div>
+			<div>公众号：:{$info['public_name']}</div>
+			<div>原始ID：:{$info['public_id']}</div>
+			<hr>
+		</div>
+		<div class="col-md-12">
+			<if condition="is_array($list_menu)">
+			<ul>
+				<foreach name="list_menu" key="key" item="menu">
+				<li><input type="text" id="menu[{$key}][name]"
+					name="menu[{$key}][name]" value="{$menu['name']}"> <if
+						condition="isset($menu['type'])">
+					<div>
+						类型 <input type="text" id="menu[{$key}][type]" name="menu[{$key}][type]" value="{$menu['type']}">						
+					</div>
+					<if condition="$menu['type'] eq 'view'">
+					<div>
+						连接<input type="text" id="menu[{$key}][url]" name="menu[{$key}][url]" value="{$menu['url']}">
+					</div>
+					<else if condition="$menu['type'] eq 'click'">
+					<div>
+						事件KEY<input type="text" id="menu[{$key}][key]" name="menu[{$key}][key]" value="{$menu['key']}">
+					</div></if> </if> <if condition="isset($menu['sub_button'])">
+					<ul>
+						<foreach name="$menu['sub_button']" key="sub_key"
+							item="sub_button">
+						<li>
+							<div>
+								名称<input type="text" id="menu[{$key}][sub_button][{$sub_key}][name]" name="menu[{$key}][sub_button][{$sub_key}][name]" value="{$sub_button['name']}">
+							</div>
+							<div>
+								类型<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][type]"
+									name="menu[{$key}][sub_button][{$sub_key}][type]"
+									value="{$sub_button['type']}">
+							</div> <if condition="$sub_button['type'] eq 'view'">
+							<div>
+								连接<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][url]"
+									name="menu[{$key}][sub_button][{$sub_key}][url]"
+									value="{$sub_button['url']}">
+							</div>
+							<else if condition="$sub_button['type'] eq 'click'">
+							<div>
+								事件KEY<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][key]"
+									name="menu[{$key}][sub_button][{$sub_key}][key]"
+									value="{$sub_button['key']}">
+							</div></if>
+							<hr>
+						</li>
+						</foreach>
+					</ul>
+					</if></li>
+				</foreach>
+			</ul>
+			<else /> <!-- 当公众号没有设置菜单时 -->
+			<ul>
+				<for name="key" start="0" end="3">
+				<li>
+					<div style="color: red">
+						一级名称{$key}<input type="text" id="menu[{$key}][name]"
+							name="menu[{$key}][name]" value="">
+					</div>
+					<div>
+						类型：
+							<label> <input type="radio"	class="ace" name="menu[{$key}][type]" value="view" checked="checked"> <span class="lbl">URL连接</span></label>
+							<label> <input type="radio"	class="ace" name="menu[{$key}][type]" value="click"> <span class="lbl">点击类型</span></label>
+							<label> <input type="radio"	class="ace" name="menu[{$key}][type]" value="miniprogram"> <span class="lbl">小程序类型</span></label>
+						
+					</div>
+					<div>
+						url连接<input type="text" id="menu[{$key}][url]"
+							name="menu[{$key}][url]" value="">
+					</div>
+					<div>
+						事件KEY<input type="text" id="menu[{$key}][key]"
+							name="menu[{$key}][key]" value="">
+					</div>
+					<ul>
+						<for name="sub_key" start="0" end="6">
+						<li>
+							<div>
+								二级名称{$sub_key}<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][name]"
+									name="menu[{$key}][sub_button][{$sub_key}][name]" value="">
+							</div>
+							<div>
+								类型<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][type]"
+									name="menu[{$key}][sub_button][{$sub_key}][type]" value="">
+							</div>
+							<div>
+								连接<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][url]"
+									name="menu[{$key}][sub_button][{$sub_key}][url]" value="">
+							</div>
+							<div>
+								事件KEY<input type="text"
+									id="menu[{$key}][sub_button][{$sub_key}][key]"
+									name="menu[{$key}][sub_button][{$sub_key}][key]" value="">
+							</div>
+						</li>
+						</for>
+					</ul>
+					<hr>
+				</li>
+				</for>
+			</ul>
+			</if>
+		</div>
+	</div>
+	<div class="form-group" style="text-align: center">
+		<div class="col-md-12">
+			<button class="btn btn-info" type="submit">
+				<i class="ace-icon fa fa-check bigger-110"></i> 更新微信菜单
+			</button>
+		</div>
+	</div>
+</form>
+</block>
+<block name="js"></block>

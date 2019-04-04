@@ -1,0 +1,140 @@
+#container{width: 100%; height: 100%; position: relative; overflow: hidden;}
+.swiper-container{width: 100%; height: 100%;}
+.page-1{
+   .red-person{
+        position: absolute;
+        bottom: 18%;
+        left: 50%;
+        margin-left: -2.5rem;    
+        width: 1rem;
+        transition: all ease 1.5s;
+    }
+    .line{
+        width: 5rem;
+        height: .03rem;
+        position: absolute;
+        bottom: 15%;
+        left: 50%;
+        margin-left: -2.5rem;
+        background: #3b424a;
+        
+        .percent{
+            background: #b5b4b5;
+            width: 0%;
+            height:100%;
+            transition: all ease 1.5s; 
+        }
+    } 
+}
+.page-2{
+    .video-box{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+.paodao{
+    background: url(../img/paodao.jpg)no-repeat center;
+    background-size: auto 100%;
+    -webkit-animation: back_silde linear 10s  both;
+    animation: back_silde linear 10s  both;
+}
+
+//背景动画
+@-webkit-keyframes back_silde{
+    0%{
+        background-position: 0 100%;
+    }
+    100%{
+        background-position: 100% 100%;
+    }
+}
+
+.page-3{
+    .nian{
+        position: absolute;
+        width: 2.5rem;
+        left: 4%;
+        bottom: 8%;
+        z-index: 12;
+    }
+    .p1,.p2{
+        position: absolute;
+        width: 2.5rem;
+        bottom: 20%;
+        right: -33%;
+        z-index: 5;
+    }
+    .p2{
+        bottom: 20%;
+        -webkit-animation: top_slide linear 3s 1s both;
+        animation: top_slide linear 3s 2s both;
+    }
+    .p1{
+        bottom: 20%;
+        -webkit-animation: top_slide linear 3s 5s both;
+        animation: top_slide linear 3s 5s both;  
+    }
+    .person{
+        width: 2rem;
+        position: absolute;
+        left: 65%;
+        bottom: 8%;
+        z-index: 12;
+        -webkit-animation: person_slide linear 5s 5s both;
+        animation: person_slide linear 5s 5s both;  
+    }
+}
+
+@-webkit-keyframes top_slide{
+    0%{
+        right: -33%;
+    }
+    100%{
+        right: 100%;
+    }
+}
+
+@-webkit-keyframes person_slide{
+    0%{
+        left: 65%;
+    }
+    100%{
+        left: 40%;
+    }
+}
+
+
+.page-4{
+    .tan{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: 80%;
+        height: 80%;
+    }
+    .error-page{
+        display: none;
+    }
+    .c1{
+        width: 80%;
+        margin: 0 auto;
+    }
+    .c2{
+        width: 80%;
+        margin: 0 auto;
+    }
+    .choise{
+        img{
+          width: 100%;  
+        }
+    }
+}
+.page-6{
+    
+}
+
+

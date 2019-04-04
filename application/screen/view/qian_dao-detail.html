@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>3D-签到动画</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/screen/qiandao/css/style.css"/>
+		<link rel="stylesheet" href="__STATIC__/screen/qiandao/css/animate.min.css">
+	</head>
+	<body style="background-image: url({$qiandao['bg_img']});">
+		<input type="hidden" id="qid" value="{:input('id')}" />
+		<input type="hidden" id="islogin" value="{$login_ident}" />
+		<input type="hidden" id="url" value="{$qiandao['mobile_url']}" />
+		<audio  id="bgMusic" src="{$qiandao['bg_music']}" loop autoplay></audio>
+		<div class="login-box" id="login-box">
+			<p class="title">{$qiandao['title']}</p>
+			<div>
+				<input type="text" name="password" id="password" value="请输入管理密码" />
+				<input type="button" id="submit" value="开启"/>
+			</div>
+		</div>
+		<div id="container" style="display: none;"></div>
+		<div class="top-title">
+			<img src="{$qiandao['logo']}"/>{$qiandao['title']}
+		</div>
+		<div class="person-box fg-box" id="qiandao_list" style="display: none;">
+			<ul class="person-list">
+				
+			</ul>
+		</div>
+		<div class="show_info animated" style="display:none;">
+			<div class="info_my">
+				<img src="__STATIC__/screen/qiandao/img/head-img2.png" />
+				<div class="info_mem">
+					<div class="nickname">张明明</div>
+					<p>恭喜张明明签到成功!</p>
+					<p>第<span>10</span>位</p>
+				</div>
+			</div>
+		</div>
+		<div class="code-box">
+			<div class="left-box">
+				<div class="code-bg">
+					<div id="qrcode"></div>
+				</div>
+				<p>扫一扫进入活动中</p>
+			</div>
+			<span class="line"></span>
+			<div class="right-box">
+				<!--<p>搜索关注<span>威帅</span> <br /> 发送<span>江淮R3</span>即可参与</p>-->
+			</div>
+		</div>
+		<div class="menu-box">
+			<ul class="menu-list">
+				<!--<li>弹幕</li>
+				<li>音乐</li>
+				<li>视频</li>
+				<li>皮肤</li>
+				<li>应用</li>-->
+				<li class="screen-icon" onclick="fullScreen();">全屏</li>
+			</ul>
+		</div>
+		<div class="bigmpcodebar">
+			<div class="closebutton"></div>
+			<div id="sminfo" class="label">微信扫下方二维码直接参与活动!</div>
+			<div class="qrcode" id="qrcode1"></div>
+		</div>
+		<div class="loader"><div class="icon"></div></div>
+		<script src="__STATIC__/screen/qiandao/js/jquery-3.3.1.min.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/three.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/tween.min.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/TrackballControls.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/CSS3DRenderer.js"></script>
+		<script src="__STATIC__/screen/qiandao/js/qrcode.min.js"></script>
+		<script type="text/javascript">
+			//生产二维码
+			new QRCode(document.getElementById("qrcode"), $('#url').val());
+			new QRCode(document.getElementById("qrcode1"), $('#url').val());
+			$('.closebutton').click(function(){
+				$('.bigmpcodebar').animate({height:"0px"})
+			})
+			$('#qrcode').click(function(){
+				$('.bigmpcodebar').animate({height:"100%"})
+			})
+			
+			$(function(){
+				$('.loader').hide();
+			})
+			
+			var rank_list=[];
+			var CurPersonNum = 0;
+    		var _in = ['bounceIn','bounceInDown','bounceInLeft','bounceInRight','bounceInUp','fadeIn','fadeInDown','fadeInDownBig','fadeInLeft','fadeInLeftBig','fadeInRight','fadeInRightBig','fadeInUp','fadeInUpBig','rotateIn','rotateInDownLeft','rotateInDownRight','rotateInUpLeft','rotateInUpRight','slideInDown','slideInLeft','slideInRight'];
+    		var _out = ['bounceOut','bounceOutDown','bounceOutLeft','bounceOutRight','bounceOutUp','fadeOut','fadeOutDown','fadeOutDownBig','fadeOutLeft','fadeOutLeftBig','fadeOutRight','fadeOutRightBig','fadeOutUp','fadeOutUpBig','rotateOut','rotateOutDownLeft','rotateOutDownRight','rotateOutUpLeft','rotateOutUpRight','slideOutDown','slideOutLeft','slideOutRight'];
+			function getRankList(){
+				var data=rank_list;
+					//更新右边数据推送
+					if(CurPersonNum==9){
+						CurPersonNum=0;
+					}
+					console.log(data);
+					$('.person-list').prepend(`
+						<li style="height:0;">
+							<div class='fg-left'>
+								<img src="${data[CurPersonNum].headimgurl}"/>
+							</div>
+							<div class='fg-right'>
+								<h4>${data[CurPersonNum].nickname}</h4>
+								<a href='javascript:;'>签到第${data[CurPersonNum].ranking}位</a>
+							</div>
+						</li>`
+					);
+					var _first=$('.person-list li:first');
+					_first.animate({height:'+68px'},"slow",function(){
+						var _last=$('.person-list li:last');
+						if($('.person-list li').length==10){
+							_last.remove();
+						}
+					});
+					$('.show_info').html(`
+						<div class="info_my">
+							<img src="${data[CurPersonNum].headimgurl}" />
+							<div class="info_mem">
+								<div class="nickname">${data[CurPersonNum].nickname}</div>
+								<p>恭喜${data[CurPersonNum].nickname}签到成功!</p>
+								<p>第<span>${data[CurPersonNum].ranking}</span>位</p>
+							</div>
+						</div>
+					`);
+					CurPersonNum++;
+					// get animate
+					var rand_in = parseInt(Math.random() * _in.length,10);
+	    			var rand_out = parseInt(Math.random() * _out.length,10);
+					$('.show_info').show();
+					$('.show_info').addClass(_in[rand_in]);
+					
+				setTimeout(function(){
+					$('.show_info').removeClass(_in[rand_in]);
+					// 更改展示的图片
+					setTimeout(function(){
+						$('.show_info').addClass(_out[rand_out]);
+						setTimeout(function(){
+							$('.show_info').removeClass(_out[rand_out]);
+							$('.show_info').hide();
+						},1000);
+					},1500);
+				},1000);
+			};
+			
+			window.onbeforeunload = function(event) {
+			    event.returnValue = "是否跳转页面";
+			};
+		</script>
+
+		<script>
+			var personArray = new Array;
+    		
+    		// 登录验证
+    		$('#submit').click(function(){
+    			var pws=$('#password').val();
+    			var id=$('#qid').val();
+    			if($('#password').attr('type')=='text'){
+    				return;
+    			}
+    			
+    			$.ajax({
+    				type:"post",
+    				url:"{:url('login_check')}",
+    				data:{id:id,password:pws},
+    				dataType:'json',
+    				success:function(rs){
+    					if(rs.status==100){
+    						$('#login-box').hide();
+    						$('#islogin').val(1);
+    						isLogin()
+    					}else{
+    						alert(rs.info);
+    					}
+    				}
+    			});
+    		})
+    		//密码输入变化
+    		$('#password').focus(function(){
+    			if($(this).attr('type')=='text'){
+	    			$(this).attr('type','password');
+	    			$(this).val('');	
+    			}
+    			
+    		})
+    		$('#password').blur(function(){
+    			if($(this).val()==''){
+    				$(this).attr('type','text');
+    				$(this).val('');
+    			}
+    			
+    		})
+    		var stime;
+    		
+    		var time=setInterval(function(){
+    			if($('#islogin').val()==0){
+    				return;
+    			}
+    			clearInterval(stime);
+    			CurPersonNum = 0;
+    			getqiandaolist()
+    		},4000)
+    		
+    		
+			
+			function getqiandaolist(){
+				var id=$('#qid').val();
+				$.ajax({
+					type:"post",
+					url:"{:url('getDetail')}",
+					data:{id:id},
+					dataType:'json',
+					success:function(rs){
+						if(rs.status==100){
+							$.each(rs.data.list_screen, function(i,p) {
+								$('.element:eq('+i+')').find('img').attr('src',p.headimgurl);
+							});
+							$('#qiandao_list,#container').show()
+							rank_list=rs.data.list_rank;
+							if(rank_list==''){
+								return;
+							}
+							getRankList();
+							stime=setInterval(function(){
+								getRankList()
+							},4000)
+						}
+					}
+				});
+				
+			}
+	        //全屏
+	        function fullScreen(){
+	            var el = document.documentElement;
+	            var rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen;      
+	                if(typeof rfs != "undefined" && rfs) {
+	                    rfs.call(el);
+	                };
+	              return;
+	        }
+
+
+			// 生成虚拟数据
+	        for(var i=0;i<200;i++){
+				personArray.push({
+		            image: "img/a.png"
+		        });
+	        }
+
+	        var table = new Array;
+		    for (var i = 0; i < personArray.length; i++) {
+		        table[i] = new Object();
+		        if (i < personArray.length) {
+		            table[i] = personArray[i];
+		            table[i].src = personArray[i].thumb_image;
+		        } 
+		        table[i].p_x = i % 20 + 1;
+		        table[i].p_y = Math.floor(i / 20) + 1;
+		    }
+
+
+			var camera, scene, renderer;
+			var controls;
+
+			var objects = [];
+			var targets = { table: [], sphere: [], helix: [], grid: [] };
+
+			init();
+			isLogin()
+			function isLogin(){
+				if($('#islogin').val()!=0){
+					$('#login-box').hide();
+					animate();
+					getqiandaolist()
+				}	
+			}
+			
+			
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 3000;
+
+				scene = new THREE.Scene();
+
+				// table
+
+				for ( var i = 0; i < table.length; i ++ ) {
+
+					var element = document.createElement( 'div' );
+					element.className = 'element';
+					element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
+
+					var img = document.createElement('img');
+					img.src = table[ i ].image;
+					element.appendChild( img );
+
+
+					/*var number = document.createElement( 'div' );
+					number.className = 'number';
+					number.textContent = (i/5) + 1;
+					element.appendChild( number );
+
+					var symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = table[ i ];
+					element.appendChild( symbol );
+
+					var details = document.createElement( 'div' );
+					details.className = 'details';
+					details.innerHTML = table[ i + 1 ] + '<br>' + table[ i + 2 ];
+					element.appendChild( details );*/
+
+					var object = new THREE.CSS3DObject( element );
+					object.position.x = Math.random() * 4000 - 2000;
+					object.position.y = Math.random() * 4000 - 2000;
+					object.position.z = Math.random() * 4000 - 2000;
+					scene.add( object );
+
+					objects.push( object );
+
+					// 表格需要坐标进行排序的
+					var object = new THREE.Object3D();
+					// object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
+					// object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
+					object.position.x = ( table[ i ].p_x * 140 ) - 1330;
+					object.position.y = - ( table[ i ].p_y * 180 ) + 990;
+
+					targets.table.push( object );
+
+				}
+
+				// sphere
+
+				var vector = new THREE.Vector3();
+				var spherical = new THREE.Spherical();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var phi = Math.acos( -1 + ( 2 * i ) / l );
+					var theta = Math.sqrt( l * Math.PI ) * phi;
+
+					var object = new THREE.Object3D();
+
+					spherical.set( 800, phi, theta );
+
+					object.position.setFromSpherical( spherical );
+
+					vector.copy( object.position ).multiplyScalar( 2 );
+
+					object.lookAt( vector );
+
+					targets.sphere.push( object );
+
+				}
+
+				// helix
+
+				var vector = new THREE.Vector3();
+				var cylindrical = new THREE.Cylindrical();
+
+				for ( var i = 0, l = objects.length; i < l; i ++ ) {
+
+					var theta = i * 0.175 + Math.PI;
+					var y = - ( i * 5 ) + 450;
+
+					var object = new THREE.Object3D();
+
+					// 参数一 圈的大小 参数二 左右间距 参数三 上下间距
+					cylindrical.set( 900, theta, y );
+
+					object.position.setFromCylindrical( cylindrical );
+
+					vector.x = object.position.x * 2;
+					vector.y = object.position.y;
+					vector.z = object.position.z * 2;
+
+					object.lookAt( vector );
+
+					targets.helix.push( object );
+
+				}
+
+				// grid
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = new THREE.Object3D();
+
+					object.position.x = ( ( i % 5 ) * 400 ) - 800; // 400 图片的左右间距  800 x轴中心店
+					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 300 ) + 500;  // 500 y轴中心店
+					object.position.z = ( Math.floor( i / 25 ) ) * 200 - 800;// 300调整 片间距 800z轴中心店
+
+					targets.grid.push( object );
+
+				}
+
+				//渲染
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				// 鼠标控制
+				controls = new THREE.TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 0.5;
+				controls.minDistance = 500;
+				controls.maxDistance = 6000;
+				controls.addEventListener( 'change', render );
+
+				// 自动更换
+				var ini = 0;
+				setInterval(function(){
+					ini = ini >= 3 ? 0 : ini;
+					++ini;
+					switch(ini){
+						case 1:
+							transform( targets.sphere, 1000 );
+						break;
+						case 2:
+							transform( targets.helix, 1000 );
+						break;
+						case 3:
+							transform( targets.grid, 1000 );
+						break;
+					}	
+				},8000);
+
+//				var button = document.getElementById( 'table' );
+//				button.addEventListener( 'click', function ( event ) {
+//					transform( targets.table, 1000 );
+//				}, false );
+//
+//				var button = document.getElementById( 'sphere' );
+//				button.addEventListener( 'click', function ( event ) {
+//					transform( targets.sphere, 2000 );
+//				}, false );
+//
+//				var button = document.getElementById( 'helix' );
+//				button.addEventListener( 'click', function ( event ) {
+//					transform( targets.helix, 2000 );
+//				}, false );
+//
+//				var button = document.getElementById( 'grid' );
+//				button.addEventListener( 'click', function ( event ) {
+//					transform( targets.grid, 2000 );
+//				}, false );
+
+				transform( targets.table, 2000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function transform( targets, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( var i = 0; i < objects.length; i ++ ) {
+
+					var object = objects[ i ];
+					var target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				render();
+
+			}
+
+			function animate() {
+
+				// 让场景通过x轴或者y轴旋转  & z
+				// scene.rotation.x += 0.011;
+				scene.rotation.y += 0.008;
+
+				requestAnimationFrame( animate );
+
+				TWEEN.update();
+
+				controls.update();
+
+				// 渲染循环
+				render();
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+		
+	</body>
+</html>

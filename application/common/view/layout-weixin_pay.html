@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>微信支付</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="__STATIC__/amazeui-2.7.2/css/amazeui.min.css">
+<link rel="stylesheet" href="__STATIC__/amazeui-2.7.2/css/app.css">
+<block name="css"></block>
+</head>
+<body>
+<block name="header">
+
+</block>
+<block name="main">
+<div class="am-container">
+	<div class="am-u-sm-12">&nbsp;</div>
+	<div class="am-u-sm-4 am-text-right">{:lang('商品名称')}：</div>
+	<div class="am-u-sm-8 am-text-left">{$order['body']}</div>
+	<div class="am-u-sm-4 am-text-right">{:lang('支付金额')}：</div>
+	<div class="am-u-sm-8 am-text-left">{$order['fee']}元</div>
+	<div class="am-u-sm-4 am-text-right">{:lang('订单号')}：</div>
+	<div class="am-u-sm-8 am-text-left">{$order['out_trade_no']}</div>
+	<div class="am-u-sm-12">&nbsp;</div>
+	<div class="am-u-sm-12">
+		<a class="am-btn am-btn-primary am-btn-block" onClick="callpay();">立即支付</a>
+	</div>
+</div>
+<!-- 支付提示信息 -->
+<div class="am-modal am-modal-no-btn" tabindex="-1" id="tip-modal">
+  <div class="am-modal-dialog">
+    <div class="am-modal-hd">微信支付信息
+      <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+    </div>
+    <div class="am-modal-bd">
+    <!-- 成功提示 -->
+    	<div id="modal-success-info" style="display:none">
+     	 <img src="/weixin/images/success.png" alt="" />
+     	 <div>支付成功</div> 
+     	 </div>
+     	<!-- 错误提示 -->
+     	 <div id="modal-error-info" style="display:none">
+     	 	<p class="success"> <img src="/weixin/images/error.png" alt="" /><div>支付遇到问题 </div></p>
+	        <p class="msg"> 如需重新支付，请在“我的订单”中重新发起支付！ </p>
+	        <p class="cheap"> <a href="{:url('Order/lists')}">查看我的订单</a> </p>
+     	 </div>
+    </div>
+  </div>
+</div>
+</block>
+<block name="footer">
+
+</block>
+<script src="__STATIC__/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+<!--<![endif]-->
+<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="__STATIC__/amazeui-2.7.2/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+<script src="__STATIC__/amazeui-2.7.2/js/amazeui.min.js"></script>
+<script type="text/javascript">
+//调用微信JS api 支付
+function jsApiCall(){
+	WeixinJSBridge.invoke(
+		'getBrandWCPayRequest',
+		<?php echo $js_api_parameters; ?>,
+		function(res){
+			if(res.err_msg == "get_brand_wcpay_request:ok" ) { //支付成功时调起				
+				$('#modal-success-info').show();
+			}else{ //支付失败时调起
+				$('#modal-error-info').show();
+			}
+		}
+	);
+}
+
+function callpay(){
+	$('#tip-modal').modal('open');
+	if (typeof WeixinJSBridge == "undefined"){
+		if( document.addEventListener ){
+			document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+		}else if (document.attachEvent){
+			document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+			document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+		}
+	}else{
+		jsApiCall();		    
+	}
+}
+</script>
+<block name="js"></block>
+</body>
+</html>

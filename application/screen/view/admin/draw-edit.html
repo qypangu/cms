@@ -1,0 +1,232 @@
+<extend name="common@layout-ace"  />
+<block name="css">
+</block>
+<block name="nav">
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+  <ul class="breadcrumb">
+    <li> <i class="ace-icon fa fa-home home-icon"></i> <a href="#">专题管理</a> </li>
+    <li class="active">添加专题</li>
+  </ul>
+  <!-- /.breadcrumb -->
+     <div class="nav-search" id="nav-search">
+     	<a class="btn btn-xs btn-info" href="{:url('lists')}"><i class="ace-icon fa fa-reply bigger-110"></i>返回</a>
+     </div>
+     <!-- /.nav-search --> 
+</div>
+</block>
+
+<block name="main">
+	<style type="text/css">
+		.param-list{
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.param-list li{
+			overflow: hidden;
+			margin-bottom: 20px;
+		}
+	</style>
+	<div class="page-content">
+	  <div class="row">
+		<div class="col-xs-12">
+			<form class="form-horizontal" role="form" action="{:url('edit')}" method="post">
+				<input type="hidden" name="id" value="{$info['id']}" />
+					<div class="form-group">
+					    <label class="col-sm-2 control-label" for="title">{:lang('screenQiandao:title')}：</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="title" name="title" value="{$info['title']}">
+						</div>
+					</div>
+					<div class="form-group">
+					    <label class="col-sm-2 control-label" for="logo">{:lang('screenQiandao:logo')}：</label>
+						<div class="col-sm-9">
+							<input type="text" readonly class="form-control img" placeholder="点击上传logo 100kb以下" id="logo" name="logo" value="{$info['logo']}">
+						</div>
+					</div>
+					<div class="form-group">
+					    <label class="col-sm-2 control-label" for="bg_img">{:lang('screenQiandao:bg_img')}：</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control img" placeholder="点击上传背景图片 1920x1080 大小 500kb以下" readonly id="bg_img" name="bg_img" value="{$info['bg_img']}">
+						</div>
+					</div>
+					<div class="form-group">
+					  	<label class="col-sm-2 control-label" for="bg_img">{:lang('screenQiandao:bg_music')}：</label>
+						<div class="col-sm-8">
+							<for start="1" end="11">
+								<label class="control-label" data-id="{$info['bg_music']}" style="margin-right: 20px;"><input type="radio" class="ace" name="bg_music" value="/static/screen/qiandao/mp3/{$i}.wma"  <if condition="$info['bg_music'] eq '/static/screen/qiandao/mp3/'.$i.'.wma'">checked="checked"</if> /><span class="lbl">音乐{$i}</span></label>
+							</for>
+						</div>
+					</div>
+					<!--<div class="form-group">
+					    <label class="col-sm-2 control-label" for="start_time">{:lang('screenQiandao:start_time')}：</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="start_time" name="start_time" value="{:date('Y-m-d h:i:s',$info['start_time'])}">
+						</div>
+					</div>
+					<div class="form-group">
+					    <label class="col-sm-2 control-label" for="end_time">{:lang('screenQiandao:end_time')}：</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="end_time" name="end_time" value="{:date('Y-m-d h:i:s',$info['end_time'])}">
+						</div>
+					</div>-->
+					<div class="form-group">
+					    <label class="col-sm-2 control-label" for="password">{:lang('screenQiandao:password')}：</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="password" name="password" value="{$info['password']}">
+						</div>
+					</div>
+					<div class="form-group">
+					  <label class="col-sm-2 control-label" for="remark">{:lang('screenQiandao:remark')}：</label>
+						<div class="col-sm-9">
+							<script id="container" name="remark" style="height: 300px;" id="remark" type="text/plain">{$info['remark']|raw}</script>
+						</div>
+					</div>
+						<div class="form-group">
+						  <div class="col-sm-2" style="margin-bottom: 20px;">
+								<button type="button" style="float: right;" id="add-param" onclick="addParam()" class="btn btn-info btn-sm">
+									添加参数
+								</button>
+							</div>
+							<div class="col-sm-10" style="padding: 0;">
+								<ul class="param-list">
+									<foreach name="$info['other_param_config']" item="vo" key="k">
+										<li class="del_{$k}">
+											<div class="col-sm-10" style="padding:0;">
+												<div class="col-sm-3">
+													<input type="text" class="form-control" placeholder="参数名称" name="other_param_config[{$k}][label]" id="" value="{$vo['label']}" />
+												</div>
+												<div class="col-sm-3">
+													<select name="other_param_config[{$k}][type]" class="form-control">
+														<option value="1" <if condition="$vo['type'] eq 1">selected</if>>输入框</option>
+														<option value="2" <if condition="$vo['type'] eq 2">selected</if>>下拉框</option>
+														<option value="3" <if condition="$vo['type'] eq 3">selected</if>>单选按钮</option>
+														<option value="4" <if condition="$vo['type'] eq 4">selected</if>>复选框</option>
+													</select>
+												</div>
+												<div class="col-sm-3">
+													<input type="text" class="form-control" placeholder="参数说明" name="other_param_config[{$k}][tips]" id="" value="{$vo['tips']}" />											
+												</div>
+												<div class="col-sm-3">
+													<input type="text" class="form-control" placeholder="选项使用逗号隔开" name="other_param_config[{$k}][value]" id="" value="{$vo['value']}" />											
+												</div>
+											</div>
+											<div class="col-sm-2">
+												<button  type="button" onclick="delParam(this)" data-id="del_{$k}" id="del-param" class="btn btn-white btn-danger">
+													删除
+												</button>
+											</div>
+										</li>
+									</foreach>
+								</ul>
+							</div>
+							
+							
+						</div>
+				<div class="form-group" style="text-align:center">
+					<div class="col-md-12">
+						<button class="btn btn-info" type="submit">
+							<i class="ace-icon fa fa-check bigger-110"></i>
+							确认修改
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	  </div>
+  	</div>
+</block>
+<block name="js">
+	<script src="__STATIC__/ace-1.4/js/moment.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__STATIC__/ace-1.4/js/bootstrap-datetimepicker.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__STATIC__/ace-1.4/js/jquery.bootstrap-duallistbox.min.js"></script>
+	<!--上传-->
+	<script src="__STATIC__/ace-1.4/js/dropzone.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		//时间插件
+			$('#start_time,#end_time').datetimepicker({
+					format: "YYYY-MM-DD HH:mm:ss",
+				})
+				.next().on(ace.click_event, function() {
+					$(this).prev().focus();
+				});
+		//图片上传功能
+		function ajaxUploads(dom){
+			$(dom).dropzone({
+				url: "{:url('uploadFile')}",
+			    paramName:"upload_file[]",
+			    maxFiles: 10,
+			    maxFilesize: 5,
+			    acceptedFiles: "image/*",
+				uploadprogress: function(file, progress, bytesSent) {
+					//alert('上传中');//异步上传要有提示
+				},
+				init: function() {
+					this.on("success", function(file, res) { //res为服务器响应回来的数据
+						if(res['code']==200){
+							$(dom).val(res['data'][0]['file_path']);
+						}else{
+							alert('上传失败');
+						}
+					});
+				}
+			}) 
+		}
+		ajaxUploads("#logo");	
+		ajaxUploads("#bg_img");	
+	</script>
+	<script type="text/javascript">
+		var addnum=$('.param-list li').length;
+		function addParam(){
+				var html=`
+					<li class="del_${addnum}">
+					<div class="col-sm-10" style="padding:0;">
+						<div class="col-sm-3">
+							<input type="text" class="form-control"  name="other_param_config[${addnum}][label]" id="" value="" />
+						</div>
+						<div class="col-sm-3">
+							<select name="other_param_config[${addnum}][type]" class="form-control">
+								<option value="">输入框</option>
+								<option value="">下拉框</option>
+								<option value="">单选按钮</option>
+								<option value="">复选框</option>
+							</select>
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" name="other_param_config[${addnum}][tips]" id="" value="" />											
+						</div>
+						<div class="col-sm-3">
+							<input type="text" class="form-control" name="other_param_config[${addnum}][value]" id="" value="" />											
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<button  type="button" onclick="delParam(this)" data-id="del_${addnum}" id="del-param" class="btn btn-white btn-danger">
+							删除
+						</button>
+					</div>
+					</li>
+				`;
+				$('.param-list').append(html);
+				addnum++;
+		}
+		
+		function delParam(dom){
+			var idx=$(dom).attr('data-id');
+			console.log(idx)
+			$('.'+idx).remove();
+			$(dom).parent().remove()
+		}
+	</script>
+	<!-- 百度编辑器 -->
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/ueditor/ueditor.all.js"></script>
+<script type="text/javascript">
+var ue = UE.getEditor('container',{
+    toolbars: [['undo', 'redo', '|','bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat','|', 'forecolor', 'backcolor','|', 'fontfamily', 'fontsize','|','indent','justifyleft', 'justifycenter', 'justifyright', 'justifyjustify','|','link', 'unlink', 'anchor', '|','simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'spechars', 'snapscreen','|','inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'preview']]
+});
+</script>
+</block>
+<block name="css">
+	<link rel="stylesheet" href="__STATIC__/ace-1.4/css/dropzone.min.css" />
+	<link rel="stylesheet" href="__STATIC__/ace-1.4/css/bootstrap-datetimepicker.min.css" />
+</block>
